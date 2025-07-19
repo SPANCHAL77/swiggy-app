@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import RestoCard from "./RestroCard";
 
 const Body = () => {
-	const [restorants, setRestorants] = useState([]);
+	const [allRestaurants, setAllRestaurants] = useState([]);
+	const [filteredRestaurants, setFilteredRestaurants] = useState([]);
+	const [searchText, setSearchText] = useState("");
 
 	useEffect(() => {
 		fetchData();
@@ -14,34 +16,59 @@ const Body = () => {
 				"https://www.swiggy.com/dapi/restaurants/list/v5?lat=18.5204303&lng=73.8567437&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING",
 			);
 			const json = await data.json();
-			setRestorants(
+			const restaurants =
 				json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle
-					?.restaurants || [],
-			);
+					?.restaurants || [];
+
+			setAllRestaurants(restaurants);
+			setFilteredRestaurants(restaurants);
 		} catch (err) {
 			console.error("Fetch error:", err);
-			setRestorants([]);
+			setAllRestaurants([]);
+			setFilteredRestaurants([]);
 		}
 	};
+
 	const handleFilter = () => {
-		const topRated = restorants.filter(
-			(items) => items?.info?.avgRating > 4,
+		const topRated = allRestaurants.filter(
+			(item) => item?.info?.avgRating > 4,
 		);
-		setRestorants(topRated);
+		setFilteredRestaurants(topRated);
+	};
+
+	const handleSearch = () => {
+		const searchFiltered = allRestaurants.filter((res) =>
+			res?.info?.name?.toLowerCase().includes(searchText.toLowerCase()),
+		);
+		setFilteredRestaurants(searchFiltered);
 	};
 
 	return (
 		<div className="body">
-			<button className="filter-btn" onClick={handleFilter}>
-				{" "}
-				Top Rated Restaurants
-			</button>
+			<div className="filter">
+				<div>
+					<input
+						type="text"
+						className="search-box"
+						value={searchText}
+						onChange={(e) => setSearchText(e.target.value)}
+					/>
+					<button className="search-btn" onClick={handleSearch}>
+						Search
+					</button>
+				</div>
+				<button className="filter-btn" onClick={handleFilter}>
+					Top Rated Restaurants
+				</button>
+			</div>
+
 			<div className="res-container">
-				{restorants.map((restorant, index) => (
-					<RestoCard key={index} restoInfo={restorant} />
+				{filteredRestaurants.map((restaurant, index) => (
+					<RestoCard key={index} restoInfo={restaurant} />
 				))}
 			</div>
 		</div>
 	);
 };
+
 export default Body;
