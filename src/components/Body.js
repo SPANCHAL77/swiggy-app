@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import RestoCard from "./RestroCard";
+import { Link } from "react-router-dom";
 
 const Body = () => {
 	const [allRestaurants, setAllRestaurants] = useState([]);
 	const [filteredRestaurants, setFilteredRestaurants] = useState([]);
 	const [searchText, setSearchText] = useState("");
-
 	useEffect(() => {
 		fetchData();
 	}, []);
@@ -64,7 +64,9 @@ const Body = () => {
 
 			<div className="res-container">
 				{filteredRestaurants.map((restaurant, index) => (
-					<RestoCard key={index} restoInfo={restaurant} />
+					<Link to={`restaurant/view/${restaurant?.info?.id}`}>
+						<RestoCard key={index} restoInfo={restaurant} />
+					</Link>
 				))}
 			</div>
 		</div>

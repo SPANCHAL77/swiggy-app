@@ -4,6 +4,7 @@ import Body from "./components/Body";
 import Header from "./components/Header";
 import { createBrowserRouter } from "react-router-dom";
 import { Outlet } from "react-router-dom";
+import MenuView from "./components/MenuView";
 
 // Layout component with Header and Outlet for nested routes
 const AppLayout = () => {
@@ -28,6 +29,10 @@ export const appRouter = createBrowserRouter([
 			{
 				path: "about",
 				element: <About />,
+			},
+			{
+				path: "restaurant/view/:resId",
+				element: <MenuView />,
 			},
 		],
 	},
